@@ -1,0 +1,11 @@
+<resources>
+	<string name="app_name">MusicPlayerEx</string>
+	<string name="input_music_info">请输入歌曲相关信息</string>
+	<string name="input_music_table_id">请输入歌单ID</string>
+	<string name="belong_album">所属唱片</string>
+	<string name="confirm">确定</string>
+	<string name="test">测试</string>
+
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

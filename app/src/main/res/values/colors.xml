@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorLightBackground">#808069</color>
+    <color name="colorTitleBackground">#000712</color>
+    <color name="colorNavBackground">#232E39</color>
+    <color name="colorNavBackgroundActive">#2E3944</color>
+    <color name="colorDarkLine">#1B2731</color>
+    <color name="colorMainContainerBackground">#18232E</color>
+    <color name="colorLightText">#8C96A0</color>
+    <color name="colorLightTransBackground">#CC2E3944</color>
+    <color name="colorMainContainerTransBackground">#9918232E</color>
+</resources>

@@ -1,0 +1,28 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:tools="http://schemas.android.com/tools"
+			  android:layout_width="match_parent"
+			  android:layout_height="match_parent"
+			  android:paddingLeft="30dp"
+			  android:paddingRight="30dp"
+			  android:gravity="center"
+			  android:orientation="horizontal"
+			  tools:context="com.test.opower.musicplayerex.SearchControlFragment">
+
+	<EditText
+		android:id="@+id/edtMusicTable"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:hint="@string/input_music_info"
+		android:textColor="@color/colorLightText"
+		android:textColorHint="@color/colorLightText"/>
+
+	<Button
+		android:id="@+id/btnConfirm"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="4"
+		android:text="@string/confirm"
+		android:textColor="@color/colorLightText"/>
+
+</LinearLayout>

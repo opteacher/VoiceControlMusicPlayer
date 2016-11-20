@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.test.opower.musicplayerex.MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/lytMainTitle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorTitleBackground">
+
+        <ImageView
+            android:id="@+id/imgTitleMenu"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="13dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/title_menu"
+            android:scaleType="fitCenter"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_alignLeft="@id/imgTitleMenu"
+            android:layout_alignStart="@id/imgTitleMenu"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/lytNavBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/colorNavBackground">
+
+        <ImageView
+            android:id="@+id/imgVoiceControlView"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/voice_view"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorDarkLine"/>
+
+        <ImageView
+            android:id="@+id/imgFormControlView"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/form_view"
+            android:background="@color/colorNavBackgroundActive"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorDarkLine"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/lytMainContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/lytNavBar"
+        android:layout_below="@id/lytMainTitle"
+        android:background="@color/colorMainContainerBackground"/>
+
+    <com.test.opower.musicplayerex.VoiceFloatBtn
+        android:id="@+id/imgVoiceFltBtn"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_above="@id/lytNavBar"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/record_fb_stop"
+        android:background="@null"
+        android:scaleType="fitCenter"/>
+
+    <TextView
+        android:id="@+id/txtVoiceResult"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_above="@id/lytNavBar"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/imgVoiceFltBtn"
+        android:layout_toStartOf="@+id/imgVoiceFltBtn"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone"/>
+</RelativeLayout>

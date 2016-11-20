@@ -1,0 +1,12 @@
+#ABNF 1.0 UTF-8;
+language zh-CN;
+mode voice;
+root $main;
+$main = $search | $play | $pause | $stop | $music_list | $music_list_id;
+$num = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+$search = 搜索;
+$music_list = 歌单;
+$play = 播放;
+$pause = 暂停;
+$stop = 停止;
+$music_list_id = $num <5+>;
