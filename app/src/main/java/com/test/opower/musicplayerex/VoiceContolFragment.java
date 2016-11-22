@@ -1,6 +1,7 @@
 package com.test.opower.musicplayerex;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ public class VoiceContolFragment extends Fragment implements View.OnClickListene
 		imgRecord.setOnClickListener(this);
 
 		//设置语音识别器的上下文为当前Fragment的上下文
-		VoiceParser.ins(root.getContext());
+		VoiceParser.ins((Activity) root.getContext());
 
 		//设置语音识别器的接口为当前Fragment
 		VoiceParser.ins(null).attachVoiceParserItf(this);

@@ -1,9 +1,13 @@
 package com.test.opower.musicplayerex;
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.GrammarListener;
@@ -32,16 +36,25 @@ import static com.iflytek.cloud.VerifierResult.TAG;
 
 public class VoiceParser
 {
-	private boolean isRecording = false;
-	private int volumn = 0;
+	public final static String SEARCH = "搜索";
+	public final static String MUSIC_LIST = "歌单";
+
+	public enum ParseState
+	{
+		WF_RECORD,
+		RECORDING,
+		WF_SEARCH,
+		SEARCH_TP,
+		WF_SEARCH_MSC_LST,
+
+	}
+	private ParseState ps = ParseState.WF_RECORD;
 	private SpeechRecognizer sr = null;
 	private RecognizerListener rl = new RecognizerListener()
 	{
 		@Override
 		public void onVolumeChanged(int i, byte[] bytes)
 		{
-			volumn = i;
-
 			for(VoiceParserItf vpi : vpis)
 			{
 				vpi.onVolumnChange(i);
@@ -84,8 +97,11 @@ public class VoiceParser
 			{
 				e.printStackTrace();
 			}
+			result = result.trim();
 			if(!result.equals("。") && !result.equals("."))
 			{
+				VoiceParser.instance.parseResult(result);
+
 				for(VoiceParserItf vpi : vpis)
 				{
 					vpi.onVoiceParsed(result);
@@ -104,7 +120,7 @@ public class VoiceParser
 		{
 			if(i == SpeechEvent.EVENT_RECORD_STOP)
 			{
-				if(isRecording)
+				if(ps != ParseState.WF_RECORD)
 				{
 					sr.startListening(this);
 				}
@@ -143,27 +159,32 @@ public class VoiceParser
 		vpis.remove(vpi);
 	}
 
-	private Context context = null;
+	private List<VoiceCmdParserItf> vcpis = new ArrayList<>();
+	public void attachVoiceCmdParserItf(VoiceCmdParserItf vcpi)	{ vcpis.add(vcpi); }
+	public void detachVoiceCmdParserItf(VoiceCmdParserItf vcpi)	{ vcpis.remove(vcpi); }
+
+	private Activity activity = null;
+	private Fragment fgt = null;
 
 	private static VoiceParser instance = null;
-	public static VoiceParser ins(Context ctt)
+	public static VoiceParser ins(Activity act)
 	{
-		if(ctt != null)
+		if(act != null)
 		{
-			if(instance != null && ctt == instance.context)
+			if(instance != null && act == instance.activity)
 			{
 				return instance;
 			}
-			instance = new VoiceParser(ctt);
+			instance = new VoiceParser(act);
 		}
 		return instance;
 	}
-	private VoiceParser(Context ctt)
+	private VoiceParser(Activity act)
 	{
-		context = ctt;
+		activity = act;
 
 		//读取云语法文件
-		InputStream is = ctt.getResources()
+		InputStream is = act.getResources()
 				.openRawResource(R.raw.cloud_grammar);
 		try
 		{
@@ -178,7 +199,7 @@ public class VoiceParser
 		}
 
 		//创建SpeechRecognizer对象
-		sr = SpeechRecognizer.createRecognizer(ctt, null);
+		sr = SpeechRecognizer.createRecognizer(act, null);
 
 		//构建ABNF语法文件
 		sr.buildGrammar("abnf", cldGrm, gl);
@@ -200,7 +221,7 @@ public class VoiceParser
 		{
 			Log.d(TAG, "识别失败，错误码：" + ret);
 		}
-		isRecording = true;
+		ps = ParseState.RECORDING;
 		for(VoiceParserItf vpi : vpis)
 		{
 			vpi.onStartRecord();
@@ -210,7 +231,7 @@ public class VoiceParser
 	public void stopRecord()
 	{
 		sr.stopListening();
-		isRecording = false;
+		ps = ParseState.WF_RECORD;
 		for(VoiceParserItf vpi : vpis)
 		{
 			vpi.onStopRecord();
@@ -219,18 +240,93 @@ public class VoiceParser
 
 	public boolean isRecording()
 	{
-		return isRecording;
+		return ps != ParseState.WF_RECORD;
 	}
 
 	public void switchRecord()
 	{
-		isRecording = !isRecording;
-		if(isRecording)	{ startRecord(); }
-		else			{ stopRecord(); }
+		if(ps != ParseState.WF_RECORD)
+		{
+			stopRecord();
+			ps = ParseState.WF_RECORD;
+		}
+		else
+		{
+			startRecord();
+			ps = ParseState.RECORDING;
+		}
 	}
 
-	public int getVolumn()
+	public void parseResult(String result)
 	{
-		return volumn;
+		//获得当前主容器中的界面
+		fgt = activity.getFragmentManager().findFragmentById(R.id.lytMainContainer);
+		SearchControlFragment scf = SearchControlFragment.ins();
+
+		//显示Toast
+		Toast.makeText(activity, result, Toast.LENGTH_LONG);
+
+		if(result.equals(SEARCH))
+		{
+			//判断当前界面是否为搜索界面，不是的话做跳转
+			if(!(fgt instanceof SearchControlFragment))
+			{
+				//界面跳转
+				activity.getFragmentManager()
+						.beginTransaction()
+						.replace(R.id.lytMainContainer, SearchControlFragment.ins())
+						.commit();
+
+				scf.getEdtMscTbl().setText("");
+			}
+
+			//调用回调函数
+			for(VoiceCmdParserItf vcpi : vcpis)
+			{
+				vcpi.onCallSearch();
+			}
+
+			//状态改变到等待搜索输入
+			ps = ParseState.WF_SEARCH;
+		}
+		else
+		if(result.equals(MUSIC_LIST))
+		{
+			//判断当前界面是否为搜索界面，不是的话做跳转
+			if(fgt instanceof SearchControlFragment)
+			{
+				scf.getEdtMscTbl().setHint(R.string.input_music_table_id);
+			}
+
+			//调用回调函数
+			for(VoiceCmdParserItf vcpi : vcpis)
+			{
+				vcpi.onCallMusicList();
+			}
+
+			//状态改变到等待歌单输入
+			ps = ParseState.WF_SEARCH_MSC_LST;
+		}
+		else
+		{
+			switch(ps)
+			{
+			case WF_SEARCH_MSC_LST:
+				//判断当前界面是不是搜索界面
+				if(fgt instanceof SearchControlFragment)
+				{
+					scf.getEdtMscTbl().setText(result);
+					scf.getBtnConfirm().callOnClick();
+				}
+
+				//调用回调函数
+				for(VoiceCmdParserItf vcpi : vcpis)
+				{
+					vcpi.onCallNumber(result);
+				}
+
+				break;
+			}
+		}
 	}
 }

@@ -18,11 +18,12 @@ import java.util.Map;
  * Created by opower on 2016/11/20.
  */
 
-public class VoiceFloatBtn extends ImageButton
+public class VoiceFloatBtn extends ImageButton implements VoiceCmdParserItf, VoiceParserItf
 {
 	private Map<Integer, Integer> mpBtnState = null;
 	private Rect rctImg = new Rect();
 	private Path spcVol = new Path();
+	private int volumn = 0;
 
 	public VoiceFloatBtn(Context context)
 	{
@@ -43,6 +44,9 @@ public class VoiceFloatBtn extends ImageButton
 		mpBtnState.put(R.drawable.record_fb_stop, R.drawable.record_fb_stop_down);
 		mpBtnState.put(R.drawable.record_fb_active, R.drawable.record_fb_active_down);
 		mpBtnState.put(R.drawable.record_fb_search, R.drawable.record_fb_search_down);
+
+		VoiceParser.ins(null).attachVoiceCmdParserItf(this);
+		VoiceParser.ins(null).attachVoiceParserItf(this);
 
 		setOnTouchListener(new OnTouchListener()
 		{
@@ -87,12 +91,55 @@ public class VoiceFloatBtn extends ImageButton
 			//生成界面裁剪路径
 			Rect cvsRct = canvas.getClipBounds();
 			spcVol.reset();
-			float radius = cvsRct.width() * (VoiceParser.ins(null).getVolumn() / 30.0f);
+			float radius = cvsRct.width() * (volumn / 30.0f);
 			spcVol.addCircle(cvsRct.centerX(), cvsRct.centerY(), radius, Path.Direction.CW);
 
 			//裁剪并绘制录音图片
 			canvas.clipPath(spcVol);
 			canvas.drawBitmap(bmp, rctImg, cvsRct, null);
 		}
+	}
+
+	@Override
+	public void onCallSearch()
+	{
+		this.setImageResource(R.drawable.record_fb_search);
+	}
+
+	@Override
+	public void onCallMusicList()
+	{
+		this.setImageResource(R.drawable.record_fb_music_list);
+	}
+
+	@Override
+	public void onCallNumber(String num)
+	{
+
+	}
+
+	@Override
+	public void onVoiceParsed(String result)
+	{
+
+	}
+
+	@Override
+	public void onStartRecord()
+	{
+
+	}
+
+	@Override
+	public void onStopRecord()
+	{
+
+	}
+
+	@Override
+	public void onVolumnChange(int i)
+	{
+		volumn = i;
+		this.invalidate();
 	}
 }

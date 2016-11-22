@@ -7,25 +7,21 @@ import android.widget.ImageView;
 
 public class MainActivity extends Activity
 {
-	public final static String MAIN_CONTAINER = "mainContainer";
 	private ImageView imgVoiceView = null;
 	private ImageView imgFormView = null;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
+		//组件初始化
+		VoiceParser vp = VoiceParser.ins(this);
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		//收集界面上的组件
 		imgVoiceView = (ImageView) this.findViewById(R.id.imgVoiceControlView);
 		imgFormView = (ImageView) this.findViewById(R.id.imgFormControlView);
-
-		//组件初始化
-		VoiceParser vp = VoiceParser.ins(this);
-		VoiceCmdParser vcp = VoiceCmdParser.ins(this);
-		vp.attachVoiceParserItf(vcp);
 
 		//设置按键事件
 		imgVoiceView.setOnClickListener(new View.OnClickListener()
@@ -44,8 +40,7 @@ public class MainActivity extends Activity
 						.beginTransaction()
 						.replace(
 								R.id.lytMainContainer,
-								VoiceContolFragment.ins(),
-								MAIN_CONTAINER)
+								VoiceContolFragment.ins())
 						.commit();
 			}
 		});
@@ -66,8 +61,7 @@ public class MainActivity extends Activity
 						.beginTransaction()
 						.replace(
 								R.id.lytMainContainer,
-								SearchControlFragment.ins(),
-								MAIN_CONTAINER)
+								SearchControlFragment.ins())
 						.commit();
 			}
 		});
